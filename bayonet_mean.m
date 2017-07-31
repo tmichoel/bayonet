@@ -1,10 +1,10 @@
 function [xhat,uhat] = bayonet_mean(C,w,mu,tau,x,varargin)
-% BAYONET - Analytic approximation for the BAYesian lassO and elastic NET
+% BAYONE_MEAN - Analytic approximation for the BAYesian lassO and elastic NET
 %
-% [xbay,uhat] = bayonet(y,A,lambda,mu,tau,x,varargin)
+% [xbay,uhat] = bayonet_mean(C,w,mu,tau,x,varargin)
 % 
 
-delta_default = 5e-3;
+delta_default = 1e-4;
 maxit_default = 1e2;
 % check additional inputs
 switch nargin
@@ -31,7 +31,7 @@ if ntau==1
 else
     % run sequence wise, each time using previous tau solution as input for
     % next
-    xhat = zeros(p,ntau);
+    xhat = zeros(length(w),ntau);
     uhat = zeros(size(xhat));
     for k=1:ntau
         [x,b] = coord_descent_loop(x,b,C,mu,tau(k),delta,maxit);

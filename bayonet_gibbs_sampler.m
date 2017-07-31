@@ -1,5 +1,5 @@
-function x_sample = bayesian_elnet_sample(y,A,lambda,mu,tau,num,burnin,step)
-% BAYESIAN_ELNET_SAMPLE - Gibbs sampling of Bayesian elastic net coefficients
+function x_sample = bayonet_gibbs_sampler(y,A,lambda,mu,tau,num,burnin,step)
+% BAYONET_GIBBS_SAMPLER - Gibbs sampling of Bayesian elastic net coefficients
 
 n = length(y);
 p = size(A,2);
@@ -31,25 +31,25 @@ end
 function [x,b] = coord_cycle(x,b,C,mu,tau)
 p = length(x);
 for i=1:p
-    xinew = coord_update(b(i),C(i,i),mu,tau);
+    xinew = bayonet_sample1d(b(i),C(i,i),mu,tau);
     diff = xinew - x(i);
     b = b - diff*C(:,i);
     b(i) = b(i) + diff*C(i,i);
     x(i) = xinew;
 end
 
-function xinew = coord_update(bi,Cii,mu,tau)
-mplus = (bi+mu)/Cii;
-mmin = (bi-mu)/Cii;
-Phiplus = normcdf(-sqrt(2*tau*Cii)*mplus);
-Phimin = normcdf(sqrt(2*tau*Cii)*mmin);
-p = 1./(1+exp(4*tau*mu*bi)*Phiplus/Phimin);
-if binornd(1,p)==1
-   % sample from positive half-line
-   xinew = rtnorm(0,inf,mmin,(2*tau*Cii)^(-0.5));
-else
-   % sample from negative half-line
-   xinew = rtnorm(-inf,0,mplus,(2*tau*Cii)^(-0.5));
-end
+% function xinew = coord_update(bi,Cii,mu,tau)
+% mplus = (bi+mu)/Cii;
+% mmin = (bi-mu)/Cii;
+% Phiplus = normcdf(-sqrt(2*tau*Cii)*mplus);
+% Phimin = normcdf(sqrt(2*tau*Cii)*mmin);
+% p = 1./(1+exp(4*tau*mu*bi)*Phiplus/Phimin);
+% if binornd(1,p)==1
+%    % sample from positive half-line
+%    xinew = rtnorm(0,inf,mmin,(2*tau*Cii)^(-0.5));
+% else
+%    % sample from negative half-line
+%    xinew = rtnorm(-inf,0,mplus,(2*tau*Cii)^(-0.5));
+% end
 
 

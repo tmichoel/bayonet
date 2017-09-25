@@ -23,10 +23,19 @@ switch nargin
         uhat = varargin{7};
         n = size(A,1);
         p = size(A,2);
-        w = 0.5*A'*y/n;
+        if length(y)==n
+            w = 0.5*A'*y/n;
+        else
+            w = y;
+        end
         Dv = (tau*(mu^2-uhat.^2).^2)./(mu^2+uhat.^2)+lambda;
-        B = eye(n)+(0.5/n)*A*diag(1./Dv)*A';
-        detfun = 0.5*sum(log(Dv))/p + 0.5*sum(log(eig(B)))/p;% 0.5*log(det(eye(n)+(0.5/n)*A*diag(1./Dv)*A'))/p;
+        if p>n
+            B = eye(n)+(0.5/n)*A*diag(1./Dv)*A';
+            detfun = 0.5*sum(log(Dv))/p + 0.5*sum(log(eig(B)))/p;% 0.5*log(det(eye(n)+(0.5/n)*A*diag(1./Dv)*A'))/p;
+        else
+            B = (0.5/n)*(A'*A)+diag(Dv);
+            detfun = 0.5*sum(log(eig(B)))/p;
+        end
 end
 
 logZ = tau*(w-uhat)'*xhat/p + log(mu) - 0.5*log(tau) ...

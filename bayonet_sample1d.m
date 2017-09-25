@@ -1,4 +1,4 @@
-function xnew = bayonet_sample1d(w,C,mu,tau)
+function xnew = bayonet_sample1d(C,w,mu,tau)
 % mplus = (b+mu)/C;
 % mmin = (b-mu)/C;
 % Phiplus = normcdf(-sqrt(2*tau*C)*mplus);

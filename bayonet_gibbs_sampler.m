@@ -22,6 +22,9 @@ x_sample(:,1) = x;
 
 % next sample after step cycles
 for k=2:num
+%     if mod(k,5e2)==0
+%         disp(k);
+%     end
    for m=1:step
        [x,b] = coord_cycle(x,b,C,mu,tau);
    end
@@ -31,7 +34,7 @@ end
 function [x,b] = coord_cycle(x,b,C,mu,tau)
 p = length(x);
 for i=1:p
-    xinew = bayonet_sample1d(b(i),C(i,i),mu,tau);
+    xinew = bayonet_sample1d(C(i,i),b(i),mu,tau);
     diff = xinew - x(i);
     b = b - diff*C(:,i);
     b(i) = b(i) + diff*C(i,i);

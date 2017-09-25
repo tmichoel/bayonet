@@ -4,7 +4,7 @@ function [xhat,uhat] = bayonet_mean(C,w,mu,tau,x,varargin)
 % [xbay,uhat] = bayonet_mean(C,w,mu,tau,x,varargin)
 % 
 
-delta_default = 1e-4;
+delta_default = 1e-6;
 maxit_default = 1e2;
 % check additional inputs
 switch nargin
@@ -13,8 +13,8 @@ switch nargin
         delta = delta_default;
         maxit = maxit_default;
     case 7
-        delta = varargin{2};
-        maxit = varargin{3};
+        delta = varargin{1};
+        maxit = varargin{2};
     otherwise
         error('Wrong number of input arguments.')
 end
@@ -56,6 +56,7 @@ while max(abs(diff)) >= delta && numit < maxit
 end
 %disp(['Number of iterations: ', num2str(numit)])
 if numit==maxit
+    disp(max(abs(diff)));
     warning('bayonet:coord_descent_loop_all:"maximum number of iterations reached"');
 end
 

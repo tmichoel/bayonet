@@ -5,4 +5,5 @@ This is a Matlab toolbox accompanying the paper <a href="https://arxiv.org/abs/1
 
 Messages:
 
-2017-09-26 : Preprint posted. Toolbox documentation in progress.
+2017-10-10 : Documentation added to all functions, type "help function_name" on the Matlab prompt to see more.
+2017-09-26 : Preprint posted.

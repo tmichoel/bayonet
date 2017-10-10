@@ -1,13 +1,41 @@
 function x_sample = bayonet_gibbs_sampler(y,A,lambda,mu,tau,num,burnin,step)
 % BAYONET_GIBBS_SAMPLER - Gibbs sampling of Bayesian elastic net coefficients
-
-n = length(y);
-p = size(A,2);
+%
+% BAYONET_GIBBS_SAMPLER implements a Gibbs sampling algorithm to sample
+% effect size vectors from the posterior distribution of the Bayesian
+% elastic net. 
+%
+% CALL:
+%   x_sample = bayonet_gibbs_sampler(y,A,lambda,mu,tau,num,burnin,step)
+% 
+% INPUT:
+%   y           repsonse data (nx1 vector)
+%   A           predictor data (nxp matrix)
+%   lambda      L2 penalty parameter
+%   mu          L1 penalty parameter
+%   tau         inverse temperature parameter
+%   num         number of samples
+%   burnin      number of coordinate loops to skip before sampling starts
+%   step        number of coordinate loops between successive samples
+%
+% OUTPUT:
+%   x_sample    sampled coefficients (pxnum matrix)
+%
+%
+% This file is part of the Bayonet toolbox for Matlab. Please cite the
+% following paper if you use this software:
+%
+% Michoel T. Analytic solution and stationary phase approximation for the
+% Bayesian lasso and elastic net. arXiv:1709.08535 (2017).
+%
+% https://arxiv.org/abs/1709.08535
+%
 
 % convert input
-[C,w] = input2cw(y,A,lambda);
+[C,w,p] = input2cw(y,A,lambda);
 
-% initialize with maximum-likelihood solution (tau=infty)
+% initialize with maximum-likelihood solution (tau=infty), this ensures
+% that the sampler starts in a region with some probability density
 x = init_glmnet(y,A,lambda,mu);
 b = w - C*x + diag(C).*x;
 
@@ -32,6 +60,7 @@ for k=2:num
 end
 
 function [x,b] = coord_cycle(x,b,C,mu,tau)
+% coord_cycle - take a conditional sample once for each coordinate
 p = length(x);
 for i=1:p
     xinew = bayonet_sample1d(C(i,i),b(i),mu,tau);
@@ -40,19 +69,5 @@ for i=1:p
     b(i) = b(i) + diff*C(i,i);
     x(i) = xinew;
 end
-
-% function xinew = coord_update(bi,Cii,mu,tau)
-% mplus = (bi+mu)/Cii;
-% mmin = (bi-mu)/Cii;
-% Phiplus = normcdf(-sqrt(2*tau*Cii)*mplus);
-% Phimin = normcdf(sqrt(2*tau*Cii)*mmin);
-% p = 1./(1+exp(4*tau*mu*bi)*Phiplus/Phimin);
-% if binornd(1,p)==1
-%    % sample from positive half-line
-%    xinew = rtnorm(0,inf,mmin,(2*tau*Cii)^(-0.5));
-% else
-%    % sample from negative half-line
-%    xinew = rtnorm(-inf,0,mplus,(2*tau*Cii)^(-0.5));
-% end
 
 
